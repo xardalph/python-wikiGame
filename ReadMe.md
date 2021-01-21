@@ -1,6 +1,6 @@
-WikiGame
+# WikiGame
 
-## Dépendances : 
+### Dépendances : 
 Python3 ou supérieur
 BeautifulSoup  
 PyInquirer
