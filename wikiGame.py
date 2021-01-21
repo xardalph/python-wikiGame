@@ -23,9 +23,7 @@ def filter_url(url):
     if url.startswith(exclude_url):
         return False
 
-    # certaines url ont deux // de suite, elle sont invalide, il faut les enlever
-    if re.search('//', url):
-        return False
+
     if "/w/index.php?" in url:
         return False
 
@@ -33,17 +31,14 @@ def filter_url(url):
 
 
 def print_all_link_store_hash(soup):
-    array_link = []
+    local_array_link = set()
 
     for div in soup.find_all("div", {"class": "mw-parser-output"}):
         for link in div.find_all("a"):
             if link.get('href') and filter_url(unquote(link.get('href'))):  # Le lien est-il valide ?
-                if link.get('href') not in array_link:  # est-il déjà présent dans le tableau ?
-                    # si j'avais voulu utiliser un set je n'aurait pas put afficher facilement les liens
-                    # sans faire une seconde boucle (ce qui peux être très couteux sur les grosses pages)
-                    array_link.append(unquote(link.get('href')))
+                local_array_link.add(unquote(link.get('href')))
 
-    return array_link
+    return local_array_link
 
 
 def get_question(array_link, url_target, actual_url):
@@ -65,6 +60,7 @@ if __name__ == '__main__':
     url = "https://fr.wikipedia.org/wiki/Sp%C3%A9cial:Page_au_hasard"
     urlTarget = urllib.request.urlopen(random_url)
     nbCoup = 0
+    clear()
 
     while url != urlTarget.url:
         nbCoup += 1
@@ -75,9 +71,7 @@ if __name__ == '__main__':
 
         answers = prompt(get_question(array_link, unquote(urlTarget.url), unquote(response.url)))
 
-        userInput = answers.get('link_user')
-
-        url = "https://fr.wikipedia.org" + quote(userInput)
+        url = "https://fr.wikipedia.org" + quote(answers.get('link_user'))
         clear()
 
     print("YOU WIN!!")
