@@ -3,6 +3,7 @@ import urllib.request
 from urllib.parse import unquote
 from os import system, name
 import re
+import cmd
 
 
 # define our clear function
@@ -16,7 +17,7 @@ def clear():
 
 def filter_url(url):
     exclude_url = (
-    "/wiki/Wikip", "/wiki/Fichier", "http", "/wiki/Portail", "/wiki/Spécial", "/wiki/Aide", "/wiki/501c", "#")
+        "/wiki/Wikip", "/wiki/Fichier", "http", "/wiki/Portail", "/wiki/Spécial", "/wiki/Aide", "/wiki/501c", "#")
     if url.startswith(exclude_url):
         return False
 
@@ -52,32 +53,84 @@ def print_all_link_store_hash(soup):
     return array_link
 
 
-if __name__ == '__main__':
-
+class WikiShell(cmd.Cmd):
     random_url = "https://fr.wikipedia.org/wiki/Sp%C3%A9cial:Page_au_hasard"
     url = "https://fr.wikipedia.org/wiki/Sp%C3%A9cial:Page_au_hasard"
 
     urlTarget = urllib.request.urlopen(random_url)
     nbCoup = 0
+    array_link = []
+    history = []
 
-    while url != urlTarget.url:
-        nbCoup += 1
+    intro = 'Welcome to the wiki game. Type help or ? to list commands.\n'
+    prompt = '(wikiGame) '
+    file = None
 
-        with urllib.request.urlopen(url) as response:
+    def __init__(self):
+        super().__init__()
+        self.make_soup()
+
+    def do_print(self, arg):
+        """print again every possibility to select"""
+        # this is not an optimized function : we call back http server instead of putting data in a cache.
+        # to add a cache we should completly change array_link format to store link and text from an href, witch would be bothersome
+        self.make_soup()
+
+    def do_showscore(self, args):
+        """show actual score"""
+        print(self.nbCoup)
+
+    def do_exit(self, arg):
+        """print history and exit"""
+        self.do_history('')
+        exit(0)
+
+    def do_history(self, args):
+        """print every link used up until now"""
+        print("history is : ")
+        print(*self.history, sep="\n")
+
+    def default(self, arg):
+        """default action is to take the number as the next link. if not a number, print help"""
+        if arg.isdigit():
+            self.do_number(arg)
+        else:
+            print("please use one of the defined command, or use a number to navigate between link")
+            self.do_help('')
+
+    def do_cancel(self, arg):
+        """rollback last link used, but keep number of turn as is"""
+        url = self.history[-1]
+        self.history.pop()
+
+    def do_number(self, link_number):
+        """use link number x (given in parameter)"""
+        if not link_number.isdigit or len(self.array_link) < int(link_number):
+            self.do_print('')
+            print(link_number + " is not valid, please select a number in the list")
+            return
+
+        self.url = "https://fr.wikipedia.org" + self.array_link[int(link_number)]
+        self.history.append(self.url)
+        self.nbCoup += 1
+        self.check_win()
+        print("url to go is {}".format(self.url))
+        self.make_soup()
+
+    def make_soup(self):
+        with urllib.request.urlopen(self.url) as response:
             soup = BeautifulSoup(response, 'html.parser')
-            array_link = print_all_link_store_hash(soup)
+            self.array_link = print_all_link_store_hash(soup)
 
-        print("target is : ", unquote(urlTarget.url))
+        print("target is : ", unquote(self.urlTarget.url))
         print("Actual url is : ", unquote(response.url))
 
-        while True:
-            userInput = int(input("please choose a link by it's number : "))
-            if len(array_link) > userInput:
-                break
+    def check_win(self):
+        if (self.url == self.urlTarget.url):
+            print("YOU WIN!!")
+            print("number of turn :  ", self.nbCoup)
+            exit(0)
 
-        url = "https://fr.wikipedia.org" + array_link[userInput]
-        print("url to go is {}".format(url))
-        clear()
 
-    print("YOU WIN!!")
-    print("number of turn :  ", nbCoup)
+if __name__ == '__main__':
+    WikiShell().cmdloop()
