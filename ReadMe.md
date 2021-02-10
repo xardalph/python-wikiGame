@@ -9,6 +9,6 @@ BeautifulSoup4
 ### pour installer les dépendances :
 pip3 install BeautifulSoup4  
 
-Pour jouer, lancer le script dans un terminal suportant la coloration syntaxique sans arguments.
+Pour jouer, lancer le script dans un terminal sans arguments.
 
 
