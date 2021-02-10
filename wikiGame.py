@@ -10,8 +10,6 @@ def clear():
     # for windows
     if name == 'nt':
         _ = system('cls')
-
-        # for mac and linux(here, os.name is 'posix')
     else:
         _ = system('clear')
 
@@ -22,7 +20,8 @@ def filter_url(url):
     if url.startswith(exclude_url):
         return False
 
-    # j'utilise des regex pour éviter les problèmes d'encodage des accent dans les noms des catégories (je ne sais pas ce que ca donnera dans d'autre langue par contre
+    # j'utilise des regex pour éviter les problèmes d'encodage des accent dans les noms des catégories
+    # (je ne sais pas ce que ca donnera dans d'autre langue par contre)
     if re.search('^/wiki/Cat.gorie:', url):
         return False
     if re.search('^/wiki/Discussion:', url):
@@ -32,7 +31,7 @@ def filter_url(url):
     if re.search('^/wiki/Projet:', url):
         return False
 
-    # certaine url ont deux // de suite, elle sont invalide, il faut les enlever
+    # certaine url ont deux // de suite, elles sont invalide, il faut les enlever
     if re.search('//', url):
         return False
     if "/w/index.php?" in url:
@@ -81,4 +80,4 @@ if __name__ == '__main__':
         clear()
 
     print("YOU WIN!!")
-    print("Nombre de coups utilisé :  ", nbCoup)
+    print("number of turn :  ", nbCoup)
