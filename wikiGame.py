@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 '''Docstring very good'''
 # define our clear function
 def clear():
-    '''Clear screen for linux or windows'''
+    """Clear screen for linux or windows"""
     # for windows
     if name == 'nt':
         _ = system('cls')
