@@ -1,13 +1,15 @@
 import urllib.request
 from urllib.parse import unquote
 from os import system, name
+import sys
 import re
 import cmd
 from bs4 import BeautifulSoup
 
-
+'''Docstring very good'''
 # define our clear function
 def clear():
+    '''Clear screen for linux or windows'''
     # for windows
     if name == 'nt':
         _ = system('cls')
@@ -16,6 +18,7 @@ def clear():
 
 
 def filter_url(url):
+
     exclude_url = (
         "/wiki/Wikip", "/wiki/Fichier", "http", "/wiki/Portail",
         "/wiki/Spécial", "/wiki/Aide", "/wiki/501c", "#")
@@ -87,7 +90,7 @@ class WikiShell(cmd.Cmd):
     def do_exit(self, arg):
         """print history and exit"""
         self.do_history('')
-        system.exit(0)
+        sys.exit(0)
 
     def do_history(self, args):
         """print every link used up until now"""
@@ -133,7 +136,7 @@ class WikiShell(cmd.Cmd):
         if self.url == self.urlTarget.url:
             print("YOU WIN!!")
             print("number of turn :  ", self.nb_coup)
-            exit(0)
+            sys.exit(0)
 
 
 if __name__ == '__main__':
