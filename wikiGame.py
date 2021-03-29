@@ -1,9 +1,9 @@
-from bs4 import BeautifulSoup
 import urllib.request
 from urllib.parse import unquote
 from os import system, name
 import re
 import cmd
+from bs4 import BeautifulSoup
 
 
 # define our clear function
@@ -17,11 +17,13 @@ def clear():
 
 def filter_url(url):
     exclude_url = (
-        "/wiki/Wikip", "/wiki/Fichier", "http", "/wiki/Portail", "/wiki/Spécial", "/wiki/Aide", "/wiki/501c", "#")
+        "/wiki/Wikip", "/wiki/Fichier", "http", "/wiki/Portail",
+        "/wiki/Spécial", "/wiki/Aide", "/wiki/501c", "#")
     if url.startswith(exclude_url):
         return False
 
-    # j'utilise des regex pour éviter les problèmes d'encodage des accent dans les noms des catégories
+    # j'utilise des regex pour éviter les problèmes
+    # d'encodage des accent dans les noms des catégories
     # (je ne sais pas ce que ca donnera dans d'autre langue par contre)
     if re.search('^/wiki/Cat.gorie:', url):
         return False
@@ -58,7 +60,7 @@ class WikiShell(cmd.Cmd):
     url = "https://fr.wikipedia.org/wiki/Sp%C3%A9cial:Page_au_hasard"
 
     urlTarget = urllib.request.urlopen(random_url)
-    nbCoup = 0
+    nb_coup = 0
     array_link = []
     history = []
 
@@ -72,18 +74,20 @@ class WikiShell(cmd.Cmd):
 
     def do_print(self, arg):
         """print again every possibility to select"""
-        # this is not an optimized function : we call back http server instead of putting data in a cache.
-        # to add a cache we should completly change array_link format to store link and text from an href, witch would be bothersome
+        # this is not an optimized function : we call back http server
+        # instead of putting data in a cache.
+        # to add a cache we should completly change array_link format to store
+        # link and text from an href, witch would be bothersome
         self.make_soup()
 
     def do_showscore(self, args):
         """show actual score"""
-        print(self.nbCoup)
+        print(self.nb_coup)
 
     def do_exit(self, arg):
         """print history and exit"""
         self.do_history('')
-        exit(0)
+        system.exit(0)
 
     def do_history(self, args):
         """print every link used up until now"""
@@ -112,7 +116,7 @@ class WikiShell(cmd.Cmd):
 
         self.url = "https://fr.wikipedia.org" + self.array_link[int(link_number)]
         self.history.append(self.url)
-        self.nbCoup += 1
+        self.nb_coup += 1
         self.check_win()
         print("url to go is {}".format(self.url))
         self.make_soup()
@@ -126,9 +130,9 @@ class WikiShell(cmd.Cmd):
         print("Actual url is : ", unquote(response.url))
 
     def check_win(self):
-        if (self.url == self.urlTarget.url):
+        if self.url == self.urlTarget.url:
             print("YOU WIN!!")
-            print("number of turn :  ", self.nbCoup)
+            print("number of turn :  ", self.nb_coup)
             exit(0)
 
 
