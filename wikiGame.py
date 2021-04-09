@@ -136,7 +136,6 @@ class WikiShell(cmd.Cmd):
         if self.url == self.urlTarget.url:
             print("YOU WIN!!")
             print("number of turn :  ", self.nb_coup)
-            sys.exit(0)
 
 
 if __name__ == '__main__':
