@@ -107,8 +107,8 @@ class WikiShell(cmd.Cmd):
 
     def do_cancel(self, arg):
         """rollback last link used, but keep number of turn as is"""
-        url = self.history[-1]
-        self.history.pop()
+        self.url = self.history[-1]
+        self.history.append(self.history[-1])
 
     def do_number(self, link_number):
         """use link number x (given in parameter)"""
